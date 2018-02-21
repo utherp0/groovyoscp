@@ -1,3 +1,14 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [groovyoscp - Examples using the Openshift Jenkins Pipeline (DSL) plugin](#groovyoscp---examples-using-the-openshift-jenkins-pipeline-dsl-plugin)
+  - [Overview](#overview)
+  - [Installation](#installation)
+  - [Examples](#examples)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # groovyoscp - Examples using the Openshift Jenkins Pipeline (DSL) plugin
 
 ## Overview
