@@ -1,0 +1,20 @@
+#!groovy
+pipeline 
+{
+  // Simple example to output the oc version at the Pod and the env variables visible to it
+  agent any    
+    
+  stages 
+  {
+    stage('initialise') 
+    {
+      agent any
+      steps 
+      {
+        echo "Running Pipeline...."
+        sh "oc version"
+        sh 'printenv'
+      }
+    }
+  }
+}

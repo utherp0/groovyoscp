@@ -1,0 +1,62 @@
+#!groovy
+pipeline 
+{
+  // Example of chaining three other pipelines - this requires existing pipelines example1,
+  // example2 and example3 and a namespace of jenkinscicd
+  agent any
+        
+  stages 
+  {
+    stage('Chain 1') 
+    {
+      steps 
+      {
+        script
+        {
+          openshift.withCluster()
+          {
+            openshift.withProject('jenkinscicd')
+            {
+              def build = openshift.startBuild("example1", "--wait")
+            }
+          }
+        }
+      }
+    }
+    
+    stage('Chain 2') 
+    {
+      steps 
+      {
+        script
+        {
+          openshift.withCluster()
+          {
+            openshift.withProject('jenkinscicd')
+            {
+              def build = openshift.startBuild("example2", "--wait")
+            }
+          }
+        }
+      }
+    }
+
+    stage('Chain 3') 
+    {
+      steps 
+      {
+        script
+        {
+          openshift.withCluster()
+          {
+            openshift.withProject('jenkinscicd')
+            {
+              def build = openshift.startBuild("example3", "--wait")
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

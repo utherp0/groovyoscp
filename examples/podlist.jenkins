@@ -1,0 +1,34 @@
+#!groovy
+pipeline 
+{
+  // Simple example to list all Pod names in the current project
+  agent any    
+    
+  stages 
+  {
+    stage('selectortest') 
+    {
+      steps
+      {
+        script
+        {
+          openshift.withCluster()
+          {
+            // Note - add openshift.withProject( projectName ) for any project for which
+            // the namespace in which the Jenkins is running has view/edit/admin access for
+            echo "Cycling through all Pods"
+            def selector = openshift.selector( 'pod' )
+        
+            //selector.describe()
+        
+            selector.withEach
+            {
+              echo "${it.name()}"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

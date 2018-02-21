@@ -1,0 +1,107 @@
+#!groovy
+pipeline 
+{
+  // Complex example - note this requires additional projects and builds to
+  // be pre-created. In this example I have a namespace called devcicd which
+  // contains a build and deployment called 'nodetest'
+  //
+  // This example shows a more complex set of steps
+  agent any    
+    
+  stages 
+  {
+    stage('Clean Dev Project')
+    {
+      steps
+      {
+        script
+        {
+          echo "Removing previous app from DEVCICD"
+          sh "oc delete all -l \"app=nodetest\" -n devcicd"
+        }
+      }
+    }
+      
+    stage('Create App in Dev Namespace') 
+    {
+      steps
+      {
+        script
+        {
+          openshift.withCluster()
+          {    
+            openshift.newApp( "https://github.com/utherp0/nodejs-ex", "--name=nodetest", "-n devcicd")  
+          }
+        }
+      }
+    }
+    
+    stage('Watch for Build Completion')
+    {
+      steps
+      {
+        script
+        {
+          openshift.withCluster()
+          {
+            openshift.withProject( 'devcicd' )
+            {
+              def targetBuildConfig = openshift.selector( "bc", "nodetest" )
+              def targetBuild = targetBuildConfig.related('builds')
+              
+              echo 'Waiting for build to be created...'
+              targetBuild.watch
+              {
+                return it.count() > 0
+              }
+              echo 'Build created..'
+              
+              targetBuild.watch
+              {
+                if( it.count() == 0 ) 
+                {
+                  echo "No builds are currently active..."
+                  return false
+                }
+                
+                def buildComplete = true
+                
+                it.withEach
+                {
+                  def individualBuild = it.object()
+                  if( it.object().status.phase != "Complete" ) buildComplete = false
+                }
+                
+                return buildComplete
+              }
+              
+              echo "Build completed..."
+            }
+          }
+        }
+      }
+    }
+    
+    stage('Expose Route in DEVCICD for svc nodetest')
+    {
+      steps
+      {
+        script
+        {
+          openshift.withCluster()
+          {
+            openshift.withProject( 'devcicd' )
+            {
+              echo "Exposing service..."
+              def targetService = openshift.selector( "svc", "nodetest" )
+              
+              targetService.expose("--name=\"nodetest\"")
+              echo "Service exposed..."
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

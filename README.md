@@ -14,4 +14,6 @@ plugin, then update the Pipeline plugin to 2.5. I run the Jenkins pod via the of
 
 ![Jenkins Configuration](screenshots/jenkins.png "Plugin configuration for Jenkins (note, I built the plugin myself)")
 
-Test!
+## Examples
+These are a work in progress, but there are a number of example scripts in the examples folder. To run these, use the template.yaml from the templates folder
+to create a buildconfig with the pipeline strategy (change the name of the build in the file then run 'oc create -f (filename)' in the appropriate namespace), then edit the buildconfig in the Openshift UI and cut and paste the entire script into the pipeline.
